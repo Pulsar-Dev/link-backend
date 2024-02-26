@@ -1,5 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ApplicationKt" type="JetRunConfigurationType" nameIsGenerated="true">
+    <envs>
+      <env name="DATABASE_PASSWORD" value="password" />
+      <env name="DATABASE_URL" value="jdbc:mariadb://localhost:3306/pulsar_backend" />
+      <env name="DATABASE_USERNAME" value="root" />
+      <env name="API_KEY" value="balls" />
+    </envs>
     <option name="MAIN_CLASS_NAME" value="dev.lythium.pulsar.ApplicationKt" />
     <module name="pulsar-backend.main" />
     <shortenClasspath name="NONE" />
