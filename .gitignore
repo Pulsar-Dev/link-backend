@@ -18,6 +18,7 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea
+.run
 *.iws
 *.iml
 *.ipr
@@ -33,4 +34,4 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
-.vscode/
+.vscode/!/.run/

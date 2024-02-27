@@ -1,10 +1,8 @@
+val ktorVersion: String by project
+val kotlinVersion: String by project
+val logbackVersion: String by project
+val exposedVersion: String by project
 
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-
-val exposed_version: String by project
-val h2_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.9.22"
@@ -24,20 +22,20 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth:$ktor_version")
-    implementation("io.ktor:ktor-server-openapi:$ktor_version")
-    implementation("io.ktor:ktor-server-swagger-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+	implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
+	implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
+	implementation("io.ktor:ktor-server-auth:$ktorVersion")
+	implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+	implementation("io.ktor:ktor-server-cors:$ktorVersion")
+	implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
+	implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
 
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
+	implementation("io.ktor:ktor-client-core:$ktorVersion")
+	implementation("io.ktor:ktor-client-jetty:$ktorVersion")
 
-    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
-    implementation("com.h2database:h2:$h2_version")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
+	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+	implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.3.1")
 }
 

@@ -1,14 +1,14 @@
 openapi: "3.0.3"
 info:
-  title: "Application API"
-  description: "Application API"
+  title: "pulsar_backend API"
+  description: "pulsar_backend API"
   version: "1.0.0"
 servers:
-  - url: "http://0.0.0.0:8080"
+  - url: "https://pulsar_backend"
 paths:
   /:
     get:
-      description: "Hello World!"
+      description: ""
       responses:
         "200":
           description: "OK"
@@ -19,5 +19,22 @@ paths:
               examples:
                 Example#1:
                   value: "Hello World!"
-components:
-  schemas:
+  /*:
+    get:
+      description: ""
+      parameters:
+        - name: "*"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "404 Not Found"
