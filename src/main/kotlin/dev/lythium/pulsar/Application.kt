@@ -65,11 +65,6 @@ fun Application.module() {
 		allowHeader(HttpHeaders.ContentType)
 	}
 
-	install(Routing) {
-		userRoutes()
-		ticketRoutes()
-	}
-
 	routing {
 		get("/") {
 			call.respondText("Hello World!")
@@ -78,5 +73,7 @@ fun Application.module() {
 			call.respondText("404 Not Found", status = HttpStatusCode.NotFound)
 		}
 
+		userRoutes()
+		ticketRoutes()
 	}
 }
