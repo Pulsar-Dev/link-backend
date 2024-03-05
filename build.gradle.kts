@@ -2,6 +2,8 @@ val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
 val exposedVersion: String by project
+val mariadbVersion: String by project
+val dotenvVersion: String by project
 
 plugins {
     application
@@ -37,6 +39,7 @@ dependencies {
 	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 	implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.3.1")
+	implementation("org.mariadb.jdbc:mariadb-java-client:$mariadbVersion")
+	implementation("io.github.cdimascio:dotenv-kotlin:$dotenvVersion")
 }
 

@@ -1,5 +1,6 @@
 package dev.lythium.pulsar.routes
 
+import dev.lythium.pulsar.Environment
 import dev.lythium.pulsar.User
 import dev.lythium.pulsar.db.UserDB
 import dev.lythium.pulsar.db.UserExistsException
@@ -16,7 +17,7 @@ import java.util.*
 fun Route.userRoutes() {
 	route("/user") {
 		post {
-			if (call.request.header("Authorization") != System.getenv("API_KEY")) {
+			if (call.request.header("Authorization") != Environment.dotenv.get("API_KEY")) {
 				call.respond(HttpStatusCode.Unauthorized, "Unauthorized.")
 				return@post
 			}
@@ -42,7 +43,7 @@ fun Route.userRoutes() {
 
 		route("/{id}") {
 			get {
-				if (call.request.header("Authorization") != System.getenv("API_KEY")) {
+				if (call.request.header("Authorization") != Environment.dotenv.get("API_KEY")) {
 					call.respond(HttpStatusCode.Unauthorized, "Unauthorized.")
 					return@get
 				}
@@ -73,7 +74,7 @@ fun Route.userRoutes() {
 			}
 
 			get("/addons") {
-				if (call.request.header("Authorization") != System.getenv("API_KEY")) {
+				if (call.request.header("Authorization") != Environment.dotenv.get("API_KEY")) {
 					call.respond(HttpStatusCode.Unauthorized, "Unauthorized.")
 					return@get
 				}
@@ -107,7 +108,7 @@ fun Route.userRoutes() {
 
 			route("/{type}") {
 				get {
-					if (call.request.header("Authorization") != System.getenv("API_KEY")) {
+					if (call.request.header("Authorization") != Environment.dotenv.get("API_KEY")) {
 						call.respond(HttpStatusCode.Unauthorized, "Unauthorized.")
 						return@get
 					}

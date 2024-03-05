@@ -46,10 +46,10 @@ object Addons {
 			}
 
 			val response: HttpResponse =
-				httpClient.request("https://www.gmodstore.com/api/v3/teams/${System.getenv("GMS_TEAM_ID")}/products") {
+				httpClient.request("https://www.gmodstore.com/api/v3/teams/${Environment.dotenv.get("GMS_TEAM_ID")}/products") {
 					method = HttpMethod.Get
 					headers {
-						append(HttpHeaders.Authorization, "Bearer " + System.getenv("GMS_API_KEY"))
+						append(HttpHeaders.Authorization, "Bearer " + Environment.dotenv.get("GMS_API_KEY"))
 					}
 					parameters {
 						append("perPage", "100")

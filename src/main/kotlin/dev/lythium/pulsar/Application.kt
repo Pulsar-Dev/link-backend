@@ -2,6 +2,7 @@ package dev.lythium.pulsar
 
 import dev.lythium.pulsar.routes.ticketRoutes
 import dev.lythium.pulsar.routes.userRoutes
+import io.github.cdimascio.dotenv.dotenv
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -16,13 +17,21 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.nio.file.Paths
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.seconds
 
+object Environment {
+	val dotenv = dotenv()
+}
+
 suspend fun main(args: Array<String>) {
-	val connectionString = System.getenv("DATABASE_URL")
-	val username = System.getenv("DATABASE_USERNAME")
-	val password = System.getenv("DATABASE_PASSWORD")
+	println(Paths.get("").toAbsolutePath().toString())
+
+
+	val connectionString = Environment.dotenv.get("DATABASE_URL")
+	val username = Environment.dotenv.get("DATABASE_USERNAME")
+	val password = Environment.dotenv.get("DATABASE_PASSWORD")
 
 	if (connectionString == null) {
 		println("DATABASE_URL NOT SET!")
@@ -37,8 +46,18 @@ suspend fun main(args: Array<String>) {
 		exitProcess(1)
 	}
 
-	if (System.getenv("API_KEY") == null) {
+	if (Environment.dotenv.get("API_KEY") == null) {
 		println("API_KEY NOT SET!")
+		exitProcess(1)
+	}
+
+	if (Environment.dotenv.get("GMS_API_KEY") == null) {
+		println("GMS_API_KEY NOT SET!")
+		exitProcess(1)
+	}
+
+	if (Environment.dotenv.get("GMS_TEAM_ID") == null) {
+		println("GMS_TEAM_ID NOT SET!")
 		exitProcess(1)
 	}
 

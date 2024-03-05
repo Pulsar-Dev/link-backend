@@ -49,7 +49,7 @@ class User(
 			httpClient.request("https://www.gmodstore.com/api/v3/users/${this.gmodstoreId}/purchases") {
 				method = HttpMethod.Get
 				headers {
-					append(HttpHeaders.Authorization, "Bearer " + System.getenv("GMS_API_KEY"))
+					append(HttpHeaders.Authorization, "Bearer " + Environment.dotenv.get("GMS_API_KEY"))
 				}
 				url {
 					parameters.append("perPage", "100")

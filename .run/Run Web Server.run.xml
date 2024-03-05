@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Web Server" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="dev.lythium.pulsar.ApplicationKt" />
+    <module name="pulsar-backend.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
