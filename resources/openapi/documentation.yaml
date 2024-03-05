@@ -1,8 +1,0 @@
-openapi: "3.0.3"
-info:
-  title: "pulsar_backend API"
-  description: "pulsar_backend API"
-  version: "1.0.0"
-servers:
-- url: "https://pulsar_backend"
-paths: {}
