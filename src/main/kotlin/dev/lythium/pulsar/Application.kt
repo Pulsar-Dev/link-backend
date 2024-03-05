@@ -9,6 +9,7 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.ratelimit.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
@@ -90,6 +91,20 @@ fun Application.module() {
 	install(CORS) {
 		anyHost()
 		allowHeader(HttpHeaders.ContentType)
+	}
+
+	intercept(ApplicationCallPipeline.Plugins) {
+		val authHeader = call.request.header("Authorization")
+
+		if (authHeader == null) {
+			call.respond(HttpStatusCode.Unauthorized, "Unauthorized.")
+			return@intercept finish()
+		}
+
+		if (authHeader != Environment.dotenv.get("API_KEY")) {
+			call.respond(HttpStatusCode.Forbidden, "Forbidden.")
+			return@intercept finish()
+		}
 	}
 
 	routing {

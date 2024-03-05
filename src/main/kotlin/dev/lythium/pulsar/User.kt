@@ -70,10 +70,6 @@ class User(
 
 		return ownedAddons
 	}
-
-	fun getOwnedExternalAddons() {
-
-	}
 }
 
 object Users : UUIDTable() {

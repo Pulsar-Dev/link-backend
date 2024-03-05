@@ -4,7 +4,8 @@ import io.ktor.server.routing.*
 
 fun Route.ticketRoutes() {
 	route("/ticket") {
+		post("/create") {
 
-
+		}
 	}
 }
