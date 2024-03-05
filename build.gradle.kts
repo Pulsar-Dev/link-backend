@@ -27,6 +27,7 @@ dependencies {
 	implementation("io.ktor:ktor-server-auth:$ktorVersion")
 	implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
 	implementation("io.ktor:ktor-server-cors:$ktorVersion")
+	implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
 	implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
 	implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
 

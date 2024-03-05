@@ -7,6 +7,7 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.ratelimit.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
@@ -16,6 +17,7 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.system.exitProcess
+import kotlin.time.Duration.Companion.seconds
 
 suspend fun main(args: Array<String>) {
 	val connectionString = System.getenv("DATABASE_URL")
@@ -58,6 +60,12 @@ fun Application.module() {
 		json(Json {
 			prettyPrint = true
 		})
+	}
+
+	install(RateLimit) {
+		global {
+			rateLimiter(limit = 5, refillPeriod = 60.seconds)
+		}
 	}
 
 	install(CORS) {
