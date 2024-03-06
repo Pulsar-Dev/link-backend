@@ -10,6 +10,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.ratelimit.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
@@ -68,6 +69,7 @@ suspend fun main(args: Array<String>) {
 		addLogger(StdOutSqlLogger)
 
 		SchemaUtils.create(Users)
+		SchemaUtils.create(Tickets)
 	}
 
 	Addons.get()
@@ -87,6 +89,8 @@ fun Application.module() {
 			rateLimiter(limit = 5, refillPeriod = 60.seconds)
 		}
 	}
+
+	install(Resources)
 
 	install(CORS) {
 		anyHost()
@@ -109,7 +113,7 @@ fun Application.module() {
 
 	routing {
 		get("/") {
-			call.respondText("Hello World!")
+			call.respondText("hi")
 		}
 		get("*") {
 			call.respondText("404 Not Found", status = HttpStatusCode.NotFound)
