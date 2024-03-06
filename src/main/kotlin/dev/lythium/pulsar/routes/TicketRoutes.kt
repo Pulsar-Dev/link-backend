@@ -13,7 +13,7 @@ fun Route.ticketRoutes() {
 	route("/ticket") {
 		post("/create") {
 			val creator = call.parameters["creator"]?.toLongOrNull()
-			var addon = call.parameters["addon"]
+			val addon = call.parameters["addon"]
 
 			if (creator == null) {
 				call.respond(HttpStatusCode.BadRequest, TicketCreateResponse(error = "Missing creator parameter."))
@@ -34,7 +34,7 @@ fun Route.ticketRoutes() {
 				return@post
 			}
 
-			var ticketId: UUID
+			val ticketId: UUID
 
 			try {
 				ticketId = TicketsDB.create(user.id, addonId)
@@ -47,7 +47,7 @@ fun Route.ticketRoutes() {
 		}
 
 		get("{id}") {
-			var id = call.parameters["id"]
+			val id = call.parameters["id"]
 
 			val ticketId: UUID?
 			try {
