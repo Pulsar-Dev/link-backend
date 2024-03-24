@@ -30,7 +30,6 @@ object Environment {
 suspend fun main(args: Array<String>) {
 	println(Paths.get("").toAbsolutePath().toString())
 
-
 	val connectionString = Environment.dotenv.get("DATABASE_URL")
 	val username = Environment.dotenv.get("DATABASE_USERNAME")
 	val password = Environment.dotenv.get("DATABASE_PASSWORD")
