@@ -6,5 +6,12 @@ import java.util.*
 
 @Serializable
 data class UserCreateResponse(
-	@Serializable(with = UUIDSerializer::class) val id: UUID
+	@Serializable(with = UUIDSerializer::class) val id: UUID? = null,
+	val error: String? = null
+)
+
+@Serializable
+data class UserGetResponse(
+	@Serializable(with = UUIDSerializer::class) val id: UUID? = null,
+	val error: String? = null
 )
