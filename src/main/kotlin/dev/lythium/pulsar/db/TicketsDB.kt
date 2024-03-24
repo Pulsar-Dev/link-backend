@@ -10,10 +10,12 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import java.util.*
 
 class UserHasOpenTicketException : Exception("User already has an open ticket for this addon.")
 class InvalidAddonTicketException : Exception("Invalid addon.")
+class TicketNotFoundException : Exception("Ticket not found.")
 
 object TicketsDB {
 	fun get(id: UUID? = null, user: UUID? = null, addon: UUID? = null): Ticket? {
@@ -47,7 +49,7 @@ object TicketsDB {
 		return ticket != null && ticket.status == TicketStatus.OPEN
 	}
 
-	fun create(user: UUID, addon: UUID, status: TicketStatus = TicketStatus.OPEN): UUID {
+	suspend fun create(user: UUID, addon: UUID, status: TicketStatus = TicketStatus.OPEN): UUID {
 		if (userHasOpenTicket(user, addon)) throw UserHasOpenTicketException()
 
 		Addons.getAddon(addon) ?: throw InvalidAddonTicketException()
@@ -65,5 +67,20 @@ object TicketsDB {
 		}
 
 		return insertedId
+	}
+
+	fun updateState(id: UUID, state: TicketStatus): Boolean {
+		get(id = id) ?: throw TicketNotFoundException()
+
+		val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+		val updated = transaction {
+			Tickets.update({ Tickets.id eq id }) {
+				it[status] = state
+				it[updated] = currentTime.toJavaLocalDateTime()
+			}
+		}
+
+		return updated > 0
 	}
 }

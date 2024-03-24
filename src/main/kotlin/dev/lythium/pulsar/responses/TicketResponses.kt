@@ -9,3 +9,10 @@ data class TicketCreateResponse(
 	@Serializable(with = UUIDSerializer::class) val id: UUID? = null,
 	val error: String? = null
 )
+
+@Serializable
+data class TicketStatusUpdateResponse(
+	val status: String? = null,
+	val success: Boolean? = null,
+	val error: String? = null
+)
