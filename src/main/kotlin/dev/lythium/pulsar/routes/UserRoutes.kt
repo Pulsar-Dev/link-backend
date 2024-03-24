@@ -113,7 +113,7 @@ fun Route.userRoutes() {
 						"gmodstore" -> {
 							val gmodstoreId: UUID?
 							try {
-								gmodstoreId = UUID.fromString(id.toString())
+								gmodstoreId = UUID.fromString(id)
 							} catch (e: IllegalArgumentException) {
 								call.respond(
 									HttpStatusCode.BadRequest,
