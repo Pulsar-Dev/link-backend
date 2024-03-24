@@ -69,8 +69,8 @@ object Addons {
 		return this.addons
 	}
 
-	fun getAddon(id: UUID): Addon? {
-		return this.addons?.find { it.id == id }
+	suspend fun getAddon(id: UUID): Addon? {
+		return this.get()?.find { it.id == id }
 	}
 }
 

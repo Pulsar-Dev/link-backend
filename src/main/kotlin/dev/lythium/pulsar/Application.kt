@@ -20,6 +20,7 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.nio.file.Paths
+import java.util.*
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.seconds
 
@@ -113,6 +114,33 @@ fun Application.module() {
 	routing {
 		get("/") {
 			call.respondText("hi")
+		}
+		get("/addons") {
+			val addons = Addons.get()
+			call.respond(addons!!)
+		}
+		get("/addons/{id}") {
+			val id = call.parameters["id"]?.toString()
+
+			if (id == null) {
+				call.respond(HttpStatusCode.BadRequest, "Invalid addon parameter.")
+				return@get
+			}
+
+			val addonId: UUID?
+			try {
+				addonId = UUID.fromString(id)
+			} catch (e: IllegalArgumentException) {
+				call.respond(HttpStatusCode.BadRequest, "Invalid addon parameter.")
+				return@get
+			}
+
+			val addon = Addons.getAddon(addonId)
+			if (addon != null) {
+				call.respond(HttpStatusCode.OK, addon)
+			} else {
+				call.respond(HttpStatusCode.NotFound, "Addon not found.")
+			}
 		}
 		get("*") {
 			call.respondText("404 Not Found", status = HttpStatusCode.NotFound)
