@@ -14,33 +14,41 @@ import kotlinx.serialization.json.Json
 import java.util.*
 
 fun Route.userRoutes() {
+	fun ApplicationCall.getUUIDFromParameter(param: String): UUID? {
+		return try {
+			UUID.fromString(parameters[param])
+		} catch (e: IllegalArgumentException) {
+			null
+		}
+	}
+
+	suspend fun ApplicationCall.respondBadRequest(message: String) {
+		this.respond(HttpStatusCode.BadRequest, UserCreateResponse(error = message))
+	}
+
+	suspend fun ApplicationCall.respondNotFound(message: String) {
+		this.respond(HttpStatusCode.NotFound, UserCreateResponse(error = message))
+	}
+
 	route("/user") {
 		post {
 			val steamId = call.parameters["steam_id"]?.toLongOrNull()
+				?: return@post call.respondBadRequest("Missing `steam_id` or invalid parameter.")
 			val discordId = call.parameters["discord_id"]?.toLongOrNull()
-			val gmodstoreId: String? = call.parameters["gmodstore_id"]
-
-			val gmsId: UUID?
-			try {
-				gmsId = UUID.fromString(gmodstoreId.toString())
-			} catch (e: IllegalArgumentException) {
-				call.respond(HttpStatusCode.BadRequest, UserCreateResponse(null, "Invalid parameters."))
-				return@post
-			}
-
-			if (steamId == null || discordId == null || gmsId == null) {
-				call.respond(HttpStatusCode.BadRequest, UserCreateResponse(null, "Missing parameters."))
-				return@post
-			}
-
+				?: return@post call.respondBadRequest("Missing `discord_id` or invalid parameter.")
+			val gmodstoreId = call.getUUIDFromParameter("gmodstore_id")
+				?: return@post call.respondBadRequest("Missing `gmodstore_id` or invalid parameter.")
 
 			try {
-				val id = UserDB.create(steamId, discordId, gmsId)
+				val id = UserDB.create(steamId, discordId, gmodstoreId)
 				call.respond(HttpStatusCode.Created, UserCreateResponse(id))
 			} catch (e: UserExistsException) {
-				val existingUser = UserDB.get(steamId = steamId, discordId = discordId, gmodstoreId = gmsId)
+				val existingUser = UserDB.get(steamId = steamId, discordId = discordId, gmodstoreId = gmodstoreId)
 
-				call.respond(HttpStatusCode.InternalServerError, UserCreateResponse(existingUser?.id, "User already exists."))
+				call.respond(
+					HttpStatusCode.InternalServerError,
+					UserCreateResponse(existingUser?.id, "User already exists.")
+				)
 			} catch (e: Exception) {
 				call.respond(HttpStatusCode.InternalServerError, UserCreateResponse(null, "Internal Server Error"))
 			}
@@ -48,27 +56,17 @@ fun Route.userRoutes() {
 
 		route("/{id}") {
 			get {
-				val id = call.parameters["id"]
+				val id = call.parameters["id"] ?: return@get call.respondBadRequest("Missing parameters.")
 
-				if (id == null) {
-					call.respond(HttpStatusCode.BadRequest, UserGetResponse(error = "Missing parameters."))
-					return@get
-				}
 
 				val pulsarId: UUID?
 				try {
-					pulsarId = UUID.fromString(id.toString())
+					pulsarId = UUID.fromString(id)
 				} catch (e: IllegalArgumentException) {
-					call.respond(HttpStatusCode.BadRequest, UserGetResponse(error = "Invalid parameters."))
-					return@get
+					return@get call.respondBadRequest("Invalid parameters.")
 				}
 
-				val user: User? = UserDB.get(id = pulsarId)
-
-				if (user == null) {
-					call.respond(HttpStatusCode.NotFound, UserGetResponse(error = "User not found."))
-					return@get
-				}
+				val user: User = UserDB.get(id = pulsarId) ?: return@get call.respondNotFound("User not found.")
 
 				call.respond(HttpStatusCode.OK, user)
 			}
@@ -82,17 +80,9 @@ fun Route.userRoutes() {
 					return@get
 				}
 
-				if (id == null) {
-					call.respond(HttpStatusCode.BadRequest, UserGetResponse(error = "Missing parameters."))
-					return@get
-				}
+				id ?: return@get call.respondBadRequest("Invalid parameters.")
 
-				val user = UserDB.get(id = id)
-
-				if (user == null) {
-					call.respond(HttpStatusCode.NotFound, UserGetResponse(error = "User not found."))
-					return@get
-				}
+				val user = UserDB.get(id = id) ?: return@get call.respondNotFound("User not found.")
 
 				val addons = user.getOwnedAddons()
 				val addonsJson = Json.encodeToString(addons)
@@ -102,31 +92,20 @@ fun Route.userRoutes() {
 
 			route("/{type}") {
 				get {
-					val id = call.parameters["id"]
-					val type = call.parameters["type"]
-
-					if (id == null) {
-						call.respond(HttpStatusCode.BadRequest, UserGetResponse(error = "Missing parameters."))
-						return@get
-					}
+					val id = call.parameters["id"] ?: return@get call.respondBadRequest("Missing parameters.")
+					val type = call.parameters["type"] ?: return@get call.respondBadRequest("Missing parameters.")
 
 					val user: User?
 
 					when (type) {
 						"steam" -> {
-							val steamId: Long = (id.toLongOrNull() ?: run {
-								call.respond(HttpStatusCode.BadRequest, UserGetResponse(error = "Invalid parameters."))
-								return@get
-							})
+							val steamId = id.toLongOrNull() ?: return@get call.respondBadRequest("Invalid parameters.")
 
 							user = UserDB.get(steamId = steamId)
 						}
 
 						"discord" -> {
-							val discordId: Long = (id.toLongOrNull() ?: run {
-								call.respond(HttpStatusCode.BadRequest, UserGetResponse(error = "Invalid parameters."))
-								return@get
-							})
+							val discordId = id.toLongOrNull() ?: return@get call.respondBadRequest("Invalid parameters.")
 
 							user = UserDB.get(discordId = discordId)
 						}
@@ -136,7 +115,10 @@ fun Route.userRoutes() {
 							try {
 								gmodstoreId = UUID.fromString(id.toString())
 							} catch (e: IllegalArgumentException) {
-								call.respond(HttpStatusCode.BadRequest, UserGetResponse(error = "Invalid `id` parameter`."))
+								call.respond(
+									HttpStatusCode.BadRequest,
+									UserGetResponse(error = "Invalid `id` parameter`.")
+								)
 								return@get
 							}
 
@@ -144,15 +126,11 @@ fun Route.userRoutes() {
 						}
 
 						else -> {
-							call.respond(HttpStatusCode.BadRequest, UserGetResponse(error = "Invalid parameters."))
-							return@get
+							return@get call.respondBadRequest("Invalid parameters.")
 						}
 					}
 
-					if (user == null) {
-						call.respond(HttpStatusCode.NotFound, UserGetResponse(error = "User not found."))
-						return@get
-					}
+					user ?: return@get call.respondNotFound("User not found.")
 
 					call.respond(HttpStatusCode.OK, user)
 				}

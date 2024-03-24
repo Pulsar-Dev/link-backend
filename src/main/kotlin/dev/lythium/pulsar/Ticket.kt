@@ -22,9 +22,17 @@ class Ticket(
 	val status: TicketStatus,
 	@Transient val created: LocalDateTime? = null,
 	@Transient val updated: LocalDateTime? = null
-) {
+)
 
-}
+@Serializable
+class TicketMessage(
+	@Serializable(with = UUIDSerializer::class) val id: UUID? = null,
+	@Serializable(with = UUIDSerializer::class) val ticket: UUID? = null,
+	@Serializable(with = UUIDSerializer::class) val user: UUID? = null,
+	val message: String,
+	@Transient val created: LocalDateTime? = null,
+	@Transient val updatedFrom: UUID? = null
+)
 
 object Tickets : UUIDTable() {
 	val user = uuid("user")
@@ -32,4 +40,12 @@ object Tickets : UUIDTable() {
 	val status = enumeration("status", TicketStatus::class)
 	val created = datetime("created")
 	val updated = datetime("updated")
+}
+
+object TicketMessages: UUIDTable() {
+	val ticket = reference("ticket", Tickets)
+	val user = reference("user", Users)
+	val message = text("message")
+	val created = datetime("created")
+	val updated_from = reference("updated_from", TicketMessages).nullable()
 }

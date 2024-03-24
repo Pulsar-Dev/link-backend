@@ -70,6 +70,7 @@ suspend fun main(args: Array<String>) {
 
 		SchemaUtils.create(Users)
 		SchemaUtils.create(Tickets)
+		SchemaUtils.create(TicketMessages)
 	}
 
 	Addons.get()
