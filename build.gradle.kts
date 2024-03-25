@@ -8,9 +8,9 @@ val dotenvVersion: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.8"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
+    id("io.ktor.plugin") version "2.3.9"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
 }
 
 group = "dev.lythium.pulsar"
@@ -35,8 +35,6 @@ dependencies {
 	implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
 	implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
 
-	implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
 	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
@@ -45,6 +43,7 @@ dependencies {
 	implementation("ch.qos.logback:logback-classic:$logbackVersion")
 	implementation("org.mariadb.jdbc:mariadb-java-client:$mariadbVersion")
 	implementation("io.github.cdimascio:dotenv-kotlin:$dotenvVersion")
+	implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
 
 ktor {

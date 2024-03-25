@@ -1,6 +1,5 @@
 package dev.lythium.pulsar
 
-import dev.lythium.pulsar.Tickets.addon
 import dev.lythium.pulsar.routes.ticketRoutes
 import dev.lythium.pulsar.routes.userRoutes
 import io.github.cdimascio.dotenv.dotenv
@@ -29,7 +28,7 @@ object Environment {
 	val dotenv = dotenv()
 }
 
-suspend fun main(args: Array<String>) {
+fun main(args: Array<String>) {
 	println(Paths.get("").toAbsolutePath().toString())
 
 	val connectionString = Environment.dotenv.get("DATABASE_URL")
