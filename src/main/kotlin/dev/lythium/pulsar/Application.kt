@@ -77,6 +77,9 @@ fun main(args: Array<String>) {
 
 	Addons.get()
 
+	val port = Environment.dotenv["PORT"]?.toInt() ?: 8080
+	System.setProperty("ktor.deployment.port", port.toString())
+
 	return io.ktor.server.netty.EngineMain.main(args)
 }
 
