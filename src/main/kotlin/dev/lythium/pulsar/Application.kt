@@ -1,5 +1,6 @@
 package dev.lythium.pulsar
 
+import dev.lythium.pulsar.Tickets.addon
 import dev.lythium.pulsar.routes.ticketRoutes
 import dev.lythium.pulsar.routes.userRoutes
 import io.github.cdimascio.dotenv.dotenv
@@ -35,30 +36,32 @@ suspend fun main(args: Array<String>) {
 	val username = Environment.dotenv.get("DATABASE_USERNAME")
 	val password = Environment.dotenv.get("DATABASE_PASSWORD")
 
-	if (connectionString == null) {
+	connectionString ?: run {
 		println("DATABASE_URL NOT SET!")
 		exitProcess(1)
 	}
-	if (username == null) {
+
+	username ?: run {
 		println("DATABASE_USERNAME NOT SET!")
 		exitProcess(1)
 	}
-	if (password == null) {
+
+	password ?: run {
 		println("DATABASE_PASSWORD NOT SET!")
 		exitProcess(1)
 	}
 
-	if (Environment.dotenv.get("API_KEY") == null) {
+	Environment.dotenv.get("API_KEY") ?: run {
 		println("API_KEY NOT SET!")
 		exitProcess(1)
 	}
 
-	if (Environment.dotenv.get("GMS_API_KEY") == null) {
+	Environment.dotenv.get("GMS_API_KEY") ?: run {
 		println("GMS_API_KEY NOT SET!")
 		exitProcess(1)
 	}
 
-	if (Environment.dotenv.get("GMS_TEAM_ID") == null) {
+	Environment.dotenv.get("GMS_TEAM_ID") ?: run {
 		println("GMS_TEAM_ID NOT SET!")
 		exitProcess(1)
 	}
@@ -121,12 +124,8 @@ fun Application.module() {
 			call.respond(addons!!)
 		}
 		get("/addons/{id}") {
-			val id = call.parameters["id"]?.toString()
-
-			if (id == null) {
-				call.respond(HttpStatusCode.BadRequest, "Invalid addon parameter.")
-				return@get
-			}
+			val id =
+				call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid addon parameter.")
 
 			val addonId: UUID?
 			try {
@@ -136,13 +135,11 @@ fun Application.module() {
 				return@get
 			}
 
-			val addon = Addons.getAddon(addonId)
-			if (addon != null) {
-				call.respond(HttpStatusCode.OK, addon)
-			} else {
-				call.respond(HttpStatusCode.NotFound, "Addon not found.")
-			}
+			val addon = Addons.getAddon(addonId) ?: return@get call.respond(HttpStatusCode.NotFound, "Addon not found.")
+
+			call.respond(HttpStatusCode.OK, addon)
 		}
+
 		get("*") {
 			call.respondText("404 Not Found", status = HttpStatusCode.NotFound)
 		}

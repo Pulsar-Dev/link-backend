@@ -1,13 +1,10 @@
 package dev.lythium.pulsar
 
-import io.ktor.client.*
-import io.ktor.client.engine.jetty.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.eclipse.jetty.util.ssl.SslContextFactory
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.util.*
 
 @Serializable
@@ -36,34 +33,24 @@ data class PurchaseData(
 object Addons {
 	private var addons: Array<Addon>? = null
 
-	suspend fun get(): Array<Addon>? {
+	fun get(): Array<Addon>? {
 		if (this.addons?.isEmpty() == true || this.addons == null) {
-			val httpClient = HttpClient(Jetty) {
-				engine {
-					sslContextFactory = SslContextFactory.Client()
-					clientCacheSize = 12
-				}
-			}
+			val client = OkHttpClient.Builder()
+				.build()
 
-			val response: HttpResponse =
-				httpClient.request("https://www.gmodstore.com/api/v3/teams/${Environment.dotenv.get("GMS_TEAM_ID")}/products") {
-					method = HttpMethod.Get
-					headers {
-						append(HttpHeaders.Authorization, "Bearer " + Environment.dotenv.get("GMS_API_KEY"))
-					}
-					parameters {
-						append("perPage", "100")
-					}
-				}
+			val request = Request.Builder()
+				.url("https://www.gmodstore.com/api/v3/teams/${Environment.dotenv.get("GMS_TEAM_ID")}/products")
+				.addHeader(HttpHeaders.Authorization, "Bearer " + Environment.dotenv.get("GMS_API_KEY"))
+				.build()
 
-			val responseBody = response.bodyAsText()
+			val response = client.newCall(request).execute()
+
+			val responseBody = response.body?.string()
 
 			val json = Json { ignoreUnknownKeys = true }
-			val addonResponse = json.decodeFromString<AddonResponse>(responseBody)
+			val addonResponse = json.decodeFromString<AddonResponse>(responseBody!!)
 
 			this.addons = addonResponse.data.map { Addon(it.id, it.name) }.toTypedArray()
-
-			httpClient.close()
 		}
 
 		return this.addons

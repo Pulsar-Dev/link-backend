@@ -1,9 +1,5 @@
 package dev.lythium.pulsar
 
-import io.ktor.client.*
-import io.ktor.client.engine.jetty.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -12,7 +8,8 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
-import org.eclipse.jetty.util.ssl.SslContextFactory
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.jetbrains.exposed.dao.id.UUIDTable
 import java.util.*
 
@@ -36,33 +33,22 @@ class User(
 	val discordId: Long
 ) {
 	suspend fun getOwnedAddons(): Array<Addon?> {
-		val httpClient = HttpClient(Jetty) {
-			engine {
-				sslContextFactory = SslContextFactory.Client()
-				clientCacheSize = 12
-			}
-		}
+		val client = OkHttpClient.Builder()
+			.build()
 
 		val productIdFilter = Addons.get()?.joinToString(",") { it.id.toString() }
 
-		val response: HttpResponse =
-			httpClient.request("https://www.gmodstore.com/api/v3/users/${this.gmodstoreId}/purchases") {
-				method = HttpMethod.Get
-				headers {
-					append(HttpHeaders.Authorization, "Bearer " + Environment.dotenv.get("GMS_API_KEY"))
-				}
-				url {
-					parameters.append("perPage", "100")
-					parameters.append("filter[revoked]", "false")
-					parameters.append("filter[productId]", "$productIdFilter")
-				}
-			}
+		val request = Request.Builder()
+			.url("https://www.gmodstore.com/api/v3/users/${this.gmodstoreId}/purchases?perPage=100&filter[revoked]=false&filter[productId]=$productIdFilter")
+			.addHeader(HttpHeaders.Authorization, "Bearer " + Environment.dotenv.get("GMS_API_KEY"))
+			.build()
 
-		httpClient.close()
+		val response = client.newCall(request).execute()
 
-		val responseBody = response.bodyAsText()
+		val responseBody = response.body?.string()
+
 		val json = Json { ignoreUnknownKeys = true }
-		val addonResponse = json.decodeFromString<PurchaseResponse>(responseBody)
+		val addonResponse = json.decodeFromString<PurchaseResponse>(responseBody!!)
 
 		val ownedAddons = addonResponse.data.map {
 			Addons.getAddon(it.productId)

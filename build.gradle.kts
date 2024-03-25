@@ -17,7 +17,7 @@ group = "dev.lythium.pulsar"
 version = "0.0.1"
 
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
+	mainClass.set("dev.lythium.pulsar.ApplicationKt")
 }
 
 repositories {
@@ -35,8 +35,7 @@ dependencies {
 	implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
 	implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
 
-	implementation("io.ktor:ktor-client-core:$ktorVersion")
-	implementation("io.ktor:ktor-client-jetty:$ktorVersion")
+	implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
 	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
@@ -48,3 +47,8 @@ dependencies {
 	implementation("io.github.cdimascio:dotenv-kotlin:$dotenvVersion")
 }
 
+ktor {
+	fatJar {
+		archiveFileName.set("pulsar-backend-prod.jar")
+	}
+}
