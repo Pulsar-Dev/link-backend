@@ -115,6 +115,8 @@ fun Application.module() {
 			call.respond(HttpStatusCode.Forbidden, "Forbidden.")
 			return@intercept finish()
 		}
+
+		proceed()
 	}
 
 	routing {
