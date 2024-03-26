@@ -46,7 +46,7 @@ fun Route.userRoutes() {
 				val existingUser = UserDB.get(steamId = steamId, discordId = discordId, gmodstoreId = gmodstoreId)
 
 				call.respond(
-					HttpStatusCode.InternalServerError,
+					HttpStatusCode.Conflict,
 					UserCreateResponse(existingUser?.id, "User already exists.")
 				)
 			} catch (e: Exception) {
