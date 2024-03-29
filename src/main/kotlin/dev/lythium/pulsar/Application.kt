@@ -6,6 +6,7 @@ import io.github.cdimascio.dotenv.dotenv
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.ratelimit.*
@@ -19,6 +20,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.slf4j.event.Level
 import java.nio.file.Paths
 import java.util.*
 import kotlin.system.exitProcess
@@ -97,6 +99,16 @@ fun Application.module() {
 	}
 
 	install(Resources)
+	install(CallLogging) {
+		level = Level.INFO
+		format { call ->
+			val path = call.request.path()
+			val status = call.response.status()
+			val httpMethod = call.request.httpMethod.value
+			val userAgent = call.request.headers["User-Agent"]
+			"Path: $path, Status: $status, HTTP method: $httpMethod, User agent: $userAgent"
+		}
+	}
 
 	install(CORS) {
 		anyHost()
