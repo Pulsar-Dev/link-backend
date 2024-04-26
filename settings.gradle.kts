@@ -1,1 +1,1 @@
-rootProject.name = "pulsar-backend"
+rootProject.name = "pulsar-link-backend"

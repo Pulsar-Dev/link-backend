@@ -21,7 +21,6 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
-import java.nio.file.Paths
 import java.util.*
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.seconds
@@ -31,8 +30,6 @@ object Environment {
 }
 
 fun main(args: Array<String>) {
-	println(Paths.get("").toAbsolutePath().toString())
-
 	val connectionString = Environment.dotenv.get("DATABASE_URL")
 	val username = Environment.dotenv.get("DATABASE_USERNAME")
 	val password = Environment.dotenv.get("DATABASE_PASSWORD")

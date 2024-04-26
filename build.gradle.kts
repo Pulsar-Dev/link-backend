@@ -50,6 +50,6 @@ dependencies {
 
 ktor {
 	fatJar {
-		archiveFileName.set("pulsar-backend.jar")
+		archiveFileName.set("pulsar-link-backend.jar")
 	}
 }
