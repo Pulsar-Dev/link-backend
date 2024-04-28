@@ -1,5 +1,6 @@
 package dev.lythium.pulsar.routes
 
+import dev.lythium.pulsar.Discord
 import dev.lythium.pulsar.User
 import dev.lythium.pulsar.db.UserDB
 import dev.lythium.pulsar.db.UserExistsException
@@ -41,6 +42,24 @@ fun Route.userRoutes() {
 
 			try {
 				val id = UserDB.create(steamId, discordId, gmodstoreId)
+
+				val userInDiscord = Discord.userInDiscord(UserDB.get(id)!!)
+
+				println(userInDiscord)
+
+				if (userInDiscord) {
+					val user = UserDB.get(id) ?: return@post call.respond(HttpStatusCode.InternalServerError)
+					println("User: ${user.gmodstoreId}")
+					val addons = user.getOwnedAddons()
+					println("Addons:")
+
+					addons.forEach {
+						if (it != null) {
+							println(it.name)
+						}
+					}
+				}
+
 				call.respond(HttpStatusCode.Created, UserCreateResponse(id))
 			} catch (e: UserExistsException) {
 				val existingUser = UserDB.get(steamId = steamId, discordId = discordId, gmodstoreId = gmodstoreId)

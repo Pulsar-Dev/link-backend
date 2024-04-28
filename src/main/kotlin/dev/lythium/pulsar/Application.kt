@@ -1,5 +1,6 @@
 package dev.lythium.pulsar
 
+import dev.lythium.pulsar.routes.spazListRoutes
 import dev.lythium.pulsar.routes.ticketRoutes
 import dev.lythium.pulsar.routes.userRoutes
 import io.github.cdimascio.dotenv.dotenv
@@ -72,6 +73,7 @@ fun main(args: Array<String>) {
 		SchemaUtils.create(Users)
 		SchemaUtils.create(Tickets)
 		SchemaUtils.create(TicketMessages)
+		SchemaUtils.create(SpazList)
 	}
 
 	Addons.get()
@@ -159,5 +161,6 @@ fun Application.module() {
 
 		userRoutes()
 		ticketRoutes()
+		spazListRoutes()
 	}
 }
