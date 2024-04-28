@@ -31,14 +31,14 @@ fun Route.spazListRoutes() {
 			call.respond(HttpStatusCode.OK, users)
 		}
 
-		get("/{id}") {
+		post("/spaz/{id}") {
 			val id = call.getUUIDFromParameter("id")
-				?: return@get call.respondBadRequest("Missing `id` or invalid parameter.")
+				?: return@post call.respondBadRequest("Missing `id` or invalid parameter.")
 
 			val user = SpazListDB.getByID(id)
 			if (user == null) {
 				call.respond(HttpStatusCode.OK, "")
-				return@get
+				return@post
 			}
 
 			call.respond(HttpStatusCode.InternalServerError, "Internal Server Error.")

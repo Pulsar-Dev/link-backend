@@ -15,6 +15,7 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -28,6 +29,16 @@ import kotlin.time.Duration.Companion.seconds
 
 object Environment {
 	val dotenv = dotenv()
+}
+
+@Serializable
+class GmodStoreSpazListObject {
+	val steamid:  String? = null
+	val user_id: String? = null
+	val product_id: String? = null
+	val version_name: String? = null
+	val extra: String? = null
+
 }
 
 fun main(args: Array<String>) {
@@ -116,6 +127,22 @@ fun Application.module() {
 
 	intercept(ApplicationCallPipeline.Plugins) {
 		val authHeader = call.request.header("Authorization")
+
+		if (call.request.path().contains("/spazlist")) {
+			val body = call.receiveText()
+			val json = Json { ignoreUnknownKeys = true }
+			val spazListObject = json.decodeFromString<GmodStoreSpazListObject>(body)
+
+			val secretKey = spazListObject.extra;
+
+			if (secretKey != Environment.dotenv.get("SPAZ_KEY")) {
+				call.respond(HttpStatusCode.Forbidden, "Forbidden.")
+				return@intercept finish()
+			}
+
+			proceed()
+			return@intercept
+		}
 
 		if (authHeader == null) {
 			call.respond(HttpStatusCode.Unauthorized, "Unauthorized.")
