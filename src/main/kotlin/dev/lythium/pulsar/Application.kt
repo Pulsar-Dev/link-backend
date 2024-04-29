@@ -1,5 +1,6 @@
 package dev.lythium.pulsar
 
+import dev.lythium.pulsar.routes.reviewRoutes
 import dev.lythium.pulsar.routes.spazListRoutes
 import dev.lythium.pulsar.routes.ticketRoutes
 import dev.lythium.pulsar.routes.userRoutes
@@ -85,6 +86,7 @@ fun main(args: Array<String>) {
 		SchemaUtils.create(Tickets)
 		SchemaUtils.create(TicketMessages)
 		SchemaUtils.create(SpazList)
+		SchemaUtils.create(Servers)
 	}
 
 	Addons.get()
@@ -144,6 +146,11 @@ fun Application.module() {
 			return@intercept
 		}
 
+		if (call.request.path().contains("/reviewers")) {
+			proceed()
+			return@intercept
+		}
+
 		if (authHeader == null) {
 			call.respond(HttpStatusCode.Unauthorized, "Unauthorized.")
 			return@intercept finish()
@@ -189,5 +196,6 @@ fun Application.module() {
 		userRoutes()
 		ticketRoutes()
 		spazListRoutes()
+		reviewRoutes()
 	}
 }
