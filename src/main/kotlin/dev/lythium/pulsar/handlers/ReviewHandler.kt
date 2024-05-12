@@ -15,7 +15,7 @@ class AddonReviewResponse(
 )
 
 @Serializable
-class AddonReview(
+data class AddonReview(
 	@Serializable(with = UUIDSerializer::class) val id: UUID? = null,
 	@Serializable(with = UUIDSerializer::class) val userId: UUID? = null,
 	val title: String? = null,
