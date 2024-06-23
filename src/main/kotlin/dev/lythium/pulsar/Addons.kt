@@ -20,7 +20,8 @@ data class AddonData(
 
 @Serializable
 data class PurchaseResponse(
-	val data: List<PurchaseData>
+	val data: List<PurchaseData>? = null,
+	val message: String? = null,
 )
 
 @Serializable

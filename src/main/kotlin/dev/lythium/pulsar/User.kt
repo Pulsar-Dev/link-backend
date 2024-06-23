@@ -50,7 +50,11 @@ class User(
 		val json = Json { ignoreUnknownKeys = true }
 		val addonResponse = json.decodeFromString<PurchaseResponse>(responseBody!!)
 
-		val ownedAddons = addonResponse.data.map {
+		if (addonResponse.message != null) {
+			return arrayOf()
+		}
+
+		val ownedAddons = addonResponse.data!!.map {
 			Addons.getAddon(it.productId)
 		}.toTypedArray()
 
