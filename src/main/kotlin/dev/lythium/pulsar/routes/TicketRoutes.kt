@@ -87,7 +87,7 @@ fun Route.ticketRoutes() {
 
 					try {
 						val msgId = TicketsDB.addUpdatedMessage(ticketId, userId, message, updatedFromId)
-						call.respond(HttpStatusCode.Created, TicketMessageCreate(id = msgId))
+						call.respond(HttpStatusCode.OK, TicketMessageCreate(id = msgId))
 					} catch (e: Exception) {
 						call.respondBadRequest(e.message.toString())
 					}
