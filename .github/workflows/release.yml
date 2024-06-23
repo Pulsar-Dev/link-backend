@@ -33,6 +33,6 @@ jobs:
                 uses: ncipollo/release-action@v1
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
-                    artifacts: "pulsar-link-backend"
+                    artifacts: "pulsar-link-backend.jar"
                     artifactErrorsFailBuild: true
                     allowUpdates: true
