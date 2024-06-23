@@ -106,7 +106,7 @@ fun Application.module() {
 
 	install(RateLimit) {
 		global {
-			rateLimiter(limit = 5, refillPeriod = 60.seconds)
+			rateLimiter(limit = 50, refillPeriod = 60.seconds)
 		}
 	}
 
