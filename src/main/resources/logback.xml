@@ -1,0 +1,26 @@
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%green(%d{YYYY-MM-dd HH:mm:ss.SSS})] [%yellow(%-5level)] [%boldCyan(%logger{36})] | %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<file>app.log</file>
+		<encoder>
+			<pattern>[%d{YYYY-MM-dd HH:mm:ss.SSS}] [%-5level] [%logger{36}] | %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="debug">
+		<appender-ref ref="STDOUT"/>
+	</root>
+
+	<root level="debug">
+		<appender-ref ref="FILE" />
+	</root>
+
+	<logger name="org.eclipse.jetty" level="INFO"/>
+	<logger name="io.netty" level="INFO"/>
+	<logger name="org.mariadb.jdbc" level="INFO"/>
+</configuration>

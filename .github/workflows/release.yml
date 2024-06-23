@@ -1,0 +1,38 @@
+name: Build and release
+
+on:
+    release:
+        types: [ published ]
+
+jobs:
+    build:
+        name: Build Jar
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+            -   name: Setup Gradle
+                uses: gradle/gradle-build-action@v3
+            -   name: Build Jar
+                run: ./gradlew buildFatJar
+            -   name: Upload binary
+                uses: actions/upload-artifact@v4
+                with:
+                    name: pulsar-link-backend
+                    path: ./build/libs/pulsar-link-backend.jar
+    upload:
+        name: Upload jar to release
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Download jar artifact
+                uses: actions/download-artifact@v4
+                with:
+                    name: pulsar-link-backend
+            -   name: Upload jar to release
+                uses: ncipollo/release-action@v1
+                with:
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    artifacts: "pulsar-link-backend.jar"
+                    artifactErrorsFailBuild: true
+                    allowUpdates: true
